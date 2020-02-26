@@ -1,0 +1,16 @@
+{
+  "name": "compass_clock",
+  "version": "1.0.0",
+  "description": "compass clock",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "compass",
+    "clock",
+    "clock"
+  ],
+  "author": "hys",
+  "license": "ISC"
+}
