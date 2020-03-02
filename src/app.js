@@ -54,37 +54,69 @@ class Plate extends React.Component {
 		let halfLen = array.length / 2;
 		let rotateDegree = _360DEGREE / array.length;
 
-		let rotate = 0;
+		let rotate = array.length === 12 ? 
+			this.props.currentTime * rotateDegree : 
+			this.props.currentTime * rotateDegree - rotateDegree;
+
 
 		//push 0:  add rooter class for show current time
-		points.push(
-			<div 
-				key={0}
-				style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
-						width: size + "px"}} 
-				className="points">
+		// points.push(
+		// 	<div 
+		// 		key={0}
+		// 		style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+		// 				width: size + "px"}} 
+		// 		className="points">
 
-				<p className="points__point point-right rooter" key={`${array[0]} ${0}`}>{array[0]}</p>
-				<p className="points__point point-left" key={array[halfLen]}>{array[halfLen]}</p>
-			</div>
-		);
-		rotate += rotateDegree;
+		// 		<p className="points__point point-right rooter" key={`${array[0]} ${0}`}>{array[0]}</p>
+		// 		<p className="points__point point-left" key={array[halfLen]}>{array[halfLen]}</p>
+		// 	</div>
+		// );
+		// rotate -= rotateDegree;
 
-		for (let i = 1; i < halfLen; i++) {
+		for (let i = 0; i < halfLen; i++) {
 
-			points.push(
-				<div 
-					key={i}
-					style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
-							width: size + "px"}} 
-					className="points">
+			if (rotate === 0) {
+				points.push(
+					<div 
+						key={i}
+						style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+								width: size + "px"}} 
+						className="points">
 
-					<p className="points__point point-right" key={`${array[i]} ${i}`}>{array[i]}</p>
-					<p className="points__point point-left" key={array[i + halfLen]}>{array[i + halfLen]}</p>
-				</div>
-			);
+						<p className="points__point point-right rooter" key={`${array[i]} ${i}`}>{array[i]}</p>
+						<p className="points__point point-left" key={array[i + halfLen]}>{array[i + halfLen]}</p>
+					</div>
+				);
+			}
 
-			rotate += rotateDegree;
+			else if (rotate === _360DEGREE / 2) {
+				points.push(
+					<div 
+						key={i}
+						style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+								width: size + "px"}} 
+						className="points">
+
+						<p className="points__point point-right" key={`${array[i]} ${i}`}>{array[i]}</p>
+						<p className="points__point point-left rooter" key={array[i + halfLen]}>{array[i + halfLen]}</p>
+					</div>
+				);
+			} else {
+
+				points.push(
+					<div 
+						key={i}
+						style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+								width: size + "px"}} 
+						className="points">
+
+						<p className="points__point point-right" key={`${array[i]} ${i}`}>{array[i]}</p>
+						<p className="points__point point-left" key={array[i + halfLen]}>{array[i + halfLen]}</p>
+					</div>
+				);
+			}
+
+			rotate -= rotateDegree;
 		}
 
 		return (
@@ -101,15 +133,36 @@ class Plate extends React.Component {
 }
 
 class App extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {date: new Date()};
+	}
+	componentDidMount() {
+		this.timerID = setInterval(
+			() => this.tick(),
+			1000
+		);
+	}
+	componentWillUnmount() {
+		clearInterval(this.timerID);
+	}
+	tick() {
+		this.setState({
+			date: new Date()
+		});
+	}
 	render() {
+		let whatWeek = Math.ceil((this.state.date.getDate() + 1) / WEEKS.length);
+
 		return (
 			<React.Fragment>
-				<Plate array={MONTHS} size={170} />
-				<Plate array={WEEKS} size={330} />
-				<Plate array={DAYS} size={460} />
-				<Plate array={HOURS} size={560} />
-				<Plate array={MINS} size={680} />
-				<Plate array={SECS} size={800} />
+				<h1>{this.state.date.toLocaleTimeString()}</h1>
+				<Plate array={MONTHS} size={170} currentTime={this.state.date.getMonth()} />
+				<Plate array={WEEKS} size={330} currentTime={whatWeek} />
+				<Plate array={DAYS} size={460} currentTime={this.state.date.getDate()} />
+				<Plate array={HOURS} size={560} currentTime={this.state.date.getHours()} />
+				<Plate array={MINS} size={680} currentTime={this.state.date.getMinutes()} />
+				<Plate array={SECS} size={800} currentTime={this.state.date.getSeconds()} />
 			</React.Fragment>
 		);
 	}

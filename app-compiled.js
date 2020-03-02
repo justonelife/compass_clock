@@ -45,51 +45,85 @@ var Plate = function (_React$Component) {
 			var halfLen = array.length / 2;
 			var rotateDegree = _360DEGREE / array.length;
 
-			var rotate = 0;
+			var rotate = array.length === 12 ? this.props.currentTime * rotateDegree : this.props.currentTime * rotateDegree - rotateDegree;
 
 			//push 0:  add rooter class for show current time
-			points.push(React.createElement(
-				'div',
-				{
-					key: 0,
-					style: { transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
-						width: size + "px" },
-					className: 'points' },
-				React.createElement(
-					'p',
-					{ className: 'points__point point-right rooter', key: array[0] + ' ' + 0 },
-					array[0]
-				),
-				React.createElement(
-					'p',
-					{ className: 'points__point point-left', key: array[halfLen] },
-					array[halfLen]
-				)
-			));
-			rotate += rotateDegree;
+			// points.push(
+			// 	<div 
+			// 		key={0}
+			// 		style={{transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+			// 				width: size + "px"}} 
+			// 		className="points">
 
-			for (var _i = 1; _i < halfLen; _i++) {
+			// 		<p className="points__point point-right rooter" key={`${array[0]} ${0}`}>{array[0]}</p>
+			// 		<p className="points__point point-left" key={array[halfLen]}>{array[halfLen]}</p>
+			// 	</div>
+			// );
+			// rotate -= rotateDegree;
 
-				points.push(React.createElement(
-					'div',
-					{
-						key: _i,
-						style: { transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
-							width: size + "px" },
-						className: 'points' },
-					React.createElement(
-						'p',
-						{ className: 'points__point point-right', key: array[_i] + ' ' + _i },
-						array[_i]
-					),
-					React.createElement(
-						'p',
-						{ className: 'points__point point-left', key: array[_i + halfLen] },
-						array[_i + halfLen]
-					)
-				));
+			for (var _i = 0; _i < halfLen; _i++) {
 
-				rotate += rotateDegree;
+				if (rotate === 0) {
+					points.push(React.createElement(
+						'div',
+						{
+							key: _i,
+							style: { transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+								width: size + "px" },
+							className: 'points' },
+						React.createElement(
+							'p',
+							{ className: 'points__point point-right rooter', key: array[_i] + ' ' + _i },
+							array[_i]
+						),
+						React.createElement(
+							'p',
+							{ className: 'points__point point-left', key: array[_i + halfLen] },
+							array[_i + halfLen]
+						)
+					));
+				} else if (rotate === _360DEGREE / 2) {
+					points.push(React.createElement(
+						'div',
+						{
+							key: _i,
+							style: { transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+								width: size + "px" },
+							className: 'points' },
+						React.createElement(
+							'p',
+							{ className: 'points__point point-right', key: array[_i] + ' ' + _i },
+							array[_i]
+						),
+						React.createElement(
+							'p',
+							{ className: 'points__point point-left rooter', key: array[_i + halfLen] },
+							array[_i + halfLen]
+						)
+					));
+				} else {
+
+					points.push(React.createElement(
+						'div',
+						{
+							key: _i,
+							style: { transform: "translate(-50%, -50%) rotate(" + rotate + "deg)",
+								width: size + "px" },
+							className: 'points' },
+						React.createElement(
+							'p',
+							{ className: 'points__point point-right', key: array[_i] + ' ' + _i },
+							array[_i]
+						),
+						React.createElement(
+							'p',
+							{ className: 'points__point point-left', key: array[_i + halfLen] },
+							array[_i + halfLen]
+						)
+					));
+				}
+
+				rotate -= rotateDegree;
 			}
 
 			return React.createElement(
@@ -113,24 +147,55 @@ var Plate = function (_React$Component) {
 var App = function (_React$Component2) {
 	_inherits(App, _React$Component2);
 
-	function App() {
+	function App(props) {
 		_classCallCheck(this, App);
 
-		return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+		var _this2 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+		_this2.state = { date: new Date() };
+		return _this2;
 	}
 
 	_createClass(App, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this3 = this;
+
+			this.timerID = setInterval(function () {
+				return _this3.tick();
+			}, 1000);
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			clearInterval(this.timerID);
+		}
+	}, {
+		key: 'tick',
+		value: function tick() {
+			this.setState({
+				date: new Date()
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var whatWeek = Math.ceil((this.state.date.getDate() + 1) / WEEKS.length);
+
 			return React.createElement(
 				React.Fragment,
 				null,
-				React.createElement(Plate, { array: MONTHS, size: 170 }),
-				React.createElement(Plate, { array: WEEKS, size: 330 }),
-				React.createElement(Plate, { array: DAYS, size: 460 }),
-				React.createElement(Plate, { array: HOURS, size: 560 }),
-				React.createElement(Plate, { array: MINS, size: 680 }),
-				React.createElement(Plate, { array: SECS, size: 800 })
+				React.createElement(
+					'h1',
+					null,
+					this.state.date.toLocaleTimeString()
+				),
+				React.createElement(Plate, { array: MONTHS, size: 170, currentTime: this.state.date.getMonth() }),
+				React.createElement(Plate, { array: WEEKS, size: 330, currentTime: whatWeek }),
+				React.createElement(Plate, { array: DAYS, size: 460, currentTime: this.state.date.getDate() }),
+				React.createElement(Plate, { array: HOURS, size: 560, currentTime: this.state.date.getHours() }),
+				React.createElement(Plate, { array: MINS, size: 680, currentTime: this.state.date.getMinutes() }),
+				React.createElement(Plate, { array: SECS, size: 800, currentTime: this.state.date.getSeconds() })
 			);
 		}
 	}]);
