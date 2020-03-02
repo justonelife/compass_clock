@@ -4,7 +4,8 @@
   "description": "compass clock",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx babel --watch src/app.js --out-file app-compiled.js --presets react-app/prod"
   },
   "keywords": [
     "compass",
@@ -12,5 +13,9 @@
     "clock"
   ],
   "author": "hys",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2"
+  }
 }
